@@ -89,6 +89,7 @@ class SortableGrid extends Component {
     this.blockWidth        = null
     this.blockHeight       = null
     this.itemWidth         = null
+    this.padding           = null
     this.itemHeight         = null
     this.gridHeightTarget  = null
     this.ghostBlocks       = []
@@ -280,15 +281,19 @@ class SortableGrid extends Component {
   }
 
   assessGridSize = ({nativeEvent}) => {
+    let widthScreen = nativeEvent.layout.width;
     console.log("Calculating grid size");
-    if (this.props.itemWidth && this.props.itemWidth < nativeEvent.layout.width) {
-      this.itemsPerRow = Math.floor(nativeEvent.layout.width / this.props.itemWidth)
-      this.blockWidth = nativeEvent.layout.width / this.itemsPerRow
+    if (this.props.padding) {
+      widthScreen = widthScreen - this.props.padding;
+    }
+    if (this.props.itemWidth && this.props.itemWidth < widthScreen) {
+      this.itemsPerRow = Math.floor(widthScreen / this.props.itemWidth)
+      this.blockWidth = widthScreen / this.itemsPerRow
       this.blockHeight = this.props.itemHeight || this.blockWidth
     }
     else {
-      this.blockWidth = nativeEvent.layout.width / this.itemsPerRow
-      this.blockHeight = this.blockWidth
+      this.blockWidth = widthScreen / this.itemsPerRow
+      this.blockHeight = this.props.itemHeight || this.blockWidth
     }
     if (this.state.gridLayout != nativeEvent.layout) {
       this.setState({
@@ -604,7 +609,8 @@ const styles = StyleSheet.create(
   },
   itemImageContainer: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 })
 
